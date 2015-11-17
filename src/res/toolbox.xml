@@ -1,0 +1,36 @@
+  <xml style="display: none">
+    <category name="Controls" colour="210">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    <category name="Math" colour="120">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+    </category>
+    <category name="Text" colour="230">
+      <block type="text"></block>
+      <block type="text_print"></block>
+    </category>
+    <category name="Variables" custom="VARIABLE" colour="20">
+    </category>
+    <category name="Functions" colour="290">
+      <block type="storeCall"></block>
+      <block type="storeRequest"></block>
+      <block type="openElevator"></block>
+      <block type="goToFloor"></block>
+      <block type="requestCount"></block>
+      <block type="callCount"></block>
+      <block type="getCallDirection"></block>
+      <block type="getCallFloor"></block>
+      <block type="nextRequestedFloor"></block>
+      <block type="clearCall"></block>
+    </category>
+  </xml>
+
+
