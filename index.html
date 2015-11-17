@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <title>Blockly Demo: Elevators</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- link in framework javascripts -->
+  <script type="text/javascript" src="js/underscore-min.js"></script>
+  <script type="text/javascript" src="js/phaser.min.js"></script>
+  <script type="text/javascript" src="js/EventEmitter.min.js"></script>
+  <script type="text/javascript" src="js/nanoajax.min.js"></script>
+  <script type="text/javascript" src="js/blockly_compressed.js"></script>
+  <script type="text/javascript" src="js/blocks_compressed.js"></script>
+  <script type="text/javascript" src="js/javascript_compressed.js"></script>
+  <script type="text/javascript" src="js/en.js"></script>
+  <!-- link in application javascripts -->
+  <script type="text/javascript" src="js/constants.js"></script>
+  <script type="text/javascript" src="js/game.js"></script>
+  <script type="text/javascript" src="js/displayinit.js"></script>
+  <script type="text/javascript" src="js/floormanager.js"></script>
+  <script type="text/javascript" src="js/personmanager.js"></script>
+  <script type="text/javascript" src="js/controller.js"></script>
+  <script type="text/javascript" src="js/rungame.js"></script>
+</head>
+<body>
+  <p>This is a demo of programming an elevator using <a href="https://developers.google.com/blockly/">Blockly</a>.</p>
+
+  <table>
+    <tr>
+      <td>
+        <button id="runButton" class="notext primary" title="...">
+          <img src='media/1x1.gif' class="run icon21">
+        </button>
+      </td>
+      <td>
+        <button id="viewButton" class="notext primary" title="...">
+          <img src='media/1x1.gif' class="link icon21">
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div id="gamepanel" style="width: 500px">
+        </div>
+      </td>
+      <td>
+        <div id="blocklyDiv" style="height: 800px"></div>
+      </td>
+    </tr>
+  </table>
+
+  <script>
+// for browsers where the window.console is unavailable
+if(!window.console){ window.console = {log: function(){} }; } 
+
+var game = null;
+
+// on window load
+__initialize = function() {
+    // create a phaser where the elevator game will be displayed
+    game = new Phaser.Game(__c_.maxX, __c_.maxY(), Phaser.AUTO, 'gamepanel', { preload: DisplayInit.preLoad, create: DisplayInit.create, update: DisplayInit.update });
+    // initialize Blockly
+    ElevGame.initBlockly();
+}
+
+/**
+ * Force Blockly to resize into the available width.
+ */
+__resize = function() {
+    var width = Math.max(window.innerWidth - 600, 250);
+    document.getElementById('blocklyDiv').style.width = width + 'px';
+};
+
+/**
+ * Bind a function to a button's click event.
+ * On touch enabled browsers, ontouchend is treated as equivalent to onclick.
+ * @param {!Element|string} el Button element or ID thereof.
+ * @param {!Function} func Event handler to bind.
+ */
+__bindClick = function(el, func) {
+    if (typeof el == 'string') {
+        el = document.getElementById(el);
+    }
+    el.addEventListener('click', func, true);
+    el.addEventListener('touchend', func, true);
+};
+
+__bindClick('runButton', ElevGame.runJS);
+__bindClick('viewButton', ElevGame.showCode);
+
+window.addEventListener('load', __initialize);
+window.addEventListener('resize', __resize);
+  </script>
+
+</body>
+</html>
