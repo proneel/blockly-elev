@@ -21,6 +21,7 @@ var PersonManager = function() {
         this.spriteGroup = game.add.group();
         this.spriteGroup.z = 3;
         this.timerClients.push(this);
+        this.timer = null;
 
         // add all event handlers
         this.addListener('add-person', this.addPerson);
@@ -29,20 +30,25 @@ var PersonManager = function() {
         this.addListener('elev-opened', this.elevOpened);
         this.addListener('elev-closed', this.elevClosed);
 
-        // start a timer every 20 msecs which does actions as required on all persons
+        // start a timer every n msecs which does actions as required on all persons
+        this.stopTimer();
         this.intervalID = window.setInterval(this._processTimer, 20);
     };
 
     this.shutdown = function() {
-        if (this.intervalID != 'undefined' && this.intervalID != null) {
-            window.clearInterval(this.intervalID);
-            this.intervalID = null;
-        }
-
+        this.stopTimer();
         // remove all persons
         _.each(this.persons, function(p) {if (p.sprite !== null) p.sprite.destroy();});
         this.persons = []; // clear out the array
         this.timerClients = [this]; // clear out the array except for this
+        this.timer = null; // dont fire any timers for this object either
+    };
+
+    this.stopTimer = function() {
+        if (this.intervalID != 'undefined' && this.intervalID != null) {
+            window.clearInterval(this.intervalID);
+            this.intervalID = null;
+        }
     };
 
     this._processTimer = function() {
