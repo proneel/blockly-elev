@@ -19,6 +19,17 @@ var FloorManager = function() {
         this.addListener('elev-arrived', this.elevArrived);
         this.addListener('elev-boarded', this.elevBoarded);
 
+        this._reset();
+
+        // start a timer every n msecs which does actions as required on all persons
+        this.stopTimer();
+        this.intervalID = window.setInterval(this._processTimer, 12);
+    };
+
+    this._reset = function() {
+        this.timer1 = null;
+        this.floorsTraveled = 0;
+
         //cycle through each floor
         //initialize the display of the up/down call buttons
         //instantly draw a closed door (not closing door)
@@ -27,12 +38,16 @@ var FloorManager = function() {
             floorManager.setCallStatus("down", false, i);
             floorManager._paintClosedElevator(fo, i);
         });
-
-        // start a timer every 20 msecs which does actions as required on all persons
-        this.intervalID = window.setInterval(this._processTimer, 20);
+        // update the floor display sprite on all floors to reflect that the elevator is on the 1st floor
+        this._updateFloorNumberDisplay(1);
     };
 
     this.shutdown = function() {
+        this._reset();
+        this.stopTimer();
+    };
+
+    this.stopTimer = function() {
         if (this.intervalID != 'undefined' && this.intervalID != null) {
             window.clearInterval(this.intervalID);
             this.intervalID = null;
@@ -154,14 +169,19 @@ var FloorManager = function() {
         this.setCallStatus(direction,false, floorNumber);
 
         // update the floor display sprite on all floors to reflect that the elevator is now on this floor
+        this._updateFloorNumberDisplay(_floorNumber);
+
+        // inform people waiting to go in that direction on that floor, so they 'look' at the elevator and collect them for boarding
+        personManager.emit('elev-opening', floorNumber, direction);
+    };
+
+    this._updateFloorNumberDisplay = function(_floorNumber) {
+        // update the floor display sprite on all floors to reflect that the elevator is now on this floor
         _.each(this.floorObjects, function(floorObject,i) {
             if (floorObject.elevAtSprite !== null) floorObject.elevAtSprite.destroy();
             floorObject.elevAtSprite = game.add.sprite(__c_.maxX-155, __c_.maxY()-(__c_.tilePix*__c_.floorH*(i+1))+36, '' + _floorNumber + '');
             floorManager.spriteGroup.add(floorObject.elevAtSprite);
         });
-
-        // inform people waiting to go in that direction on that floor, so they 'look' at the elevator and collect them for boarding
-        personManager.emit('elev-opening', floorNumber, direction);
     };
 
     this.openElevator = function(floorNumber) {
