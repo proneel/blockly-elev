@@ -15,6 +15,8 @@ var Controller = function() {
     };
 
     this.shutdown = function() {
+        this.requests = [];
+        this.calls = [];
     };
 
     this.elevatorCalled = function(floor, direction) {
@@ -117,13 +119,24 @@ var Controller = function() {
     this.validateDirection = function(direction, fname) {
         if (typeof(direction) != 'string' || (direction != 'up' && direction != 'down')) this.endGame(false, new ElevException('Invalid value of direction in ' + fname));
     };
+    
 
-    this.endGame = function(isSuccess, o) {
+    this.shutdownAll = function() {
         this.shutdown();
         RunGame.shutdown();
         personManager.shutdown();
         floorManager.shutdown();
+    };
 
+    this.initializeAll = function() {
+        DisplayInit.paintFloors();
+        floorManager.initialize();
+        personManager.initialize();
+        controller.initialize();
+    };
+
+    this.endGame = function(isSuccess, o) {
+        this.shutdownAll();
         if (isSuccess == true) {
             alert(o); // success message
         } else if (o instanceof ElevException) {
@@ -131,6 +144,8 @@ var Controller = function() {
         } else {
             alert(o); // fail message
         }
+        // reinitialize so we can start a new game again
+        this.initializeAll();
     };
 
 };
