@@ -206,6 +206,7 @@ var ElevGame = {
         code = code.concat("\ncontroller._eventFloorRequested = eventFloorRequested;");
         code = code.concat("\ncontroller._eventFloorArrived = eventFloorArrived;");
         code = code.concat("\ncontroller._eventElevClosed = eventElevClosed;");
+        code = code.concat("\ncontroller.initializeAll();");
         code = code.concat("\nRunGame.init();");
 
         return code;
@@ -214,6 +215,10 @@ var ElevGame = {
     showCode : function() {
         var code_ = Blockly.JavaScript.workspaceToCode(ElevGame.workspace);
         window.alert(code_);
+    },
+
+    reset : function() {
+        controller.shutdownAll();
     },
 
     runJS : function() {
