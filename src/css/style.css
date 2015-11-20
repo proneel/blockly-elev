@@ -9,59 +9,18 @@ body {
   overflow: hidden;
 }
 
-.farSide {
-  text-align: right;
-}
-
-html[dir="RTL"] .farSide {
-  text-align: left;
-}
-
 /* Buttons */
 button {
   font-weight: bold;
+  padding: 1px 10px;
+  margin: 1px 5px;
 }
 
 h1 {
   font-weight: normal;
-  font-size: 140%;
+  font-size: 120%;
   margin-left: 5px;
   margin-right: 5px;
-}
-
-/* Tabs */
-#tabRow>td {
-  border: 1px solid #ccc;
-  border-bottom: none;
-}
-td.tabon {
-  border-bottom-color: #ddd !important;
-  background-color: #ddd;
-  padding: 5px 19px;
-}
-td.taboff {
-  cursor: pointer;
-  padding: 5px 19px;
-}
-td.taboff:hover {
-  background-color: #eee;
-}
-td.tabmin {
-  border-top-style: none !important;
-  border-left-style: none !important;
-  border-right-style: none !important;
-}
-td.tabmax {
-  border-top-style: none !important;
-  border-left-style: none !important;
-  border-right-style: none !important;
-  width: 99%;
-  padding-left: 10px;
-  padding-right: 10px;
-  text-align: right;
-}
-html[dir=rtl] td.tabmax {
-  text-align: left;
 }
 
 table {
@@ -74,48 +33,10 @@ td {
   padding: 0;
   vertical-align: top;
 }
-.content {
-  visibility: hidden;
-  margin: 0;
-  padding: 1ex;
-  position: absolute;
-  direction: ltr;
-}
-pre.content {
-  border: 1px solid #ccc;
-  overflow: scroll;
-}
-#content_blocks {
-  padding: 0;
-}
-.blocklySvg {
-  border-top: none !important;
-}
-#content_xml {
-  resize: none;
-  outline: none;
-  border: 1px solid #ccc;
-  font-family: monospace;
-  overflow: scroll;
-}
-#languageMenu {
-  vertical-align: top;
-  margin-top: 15px;
-  margin-right: 15px;
-}
-
-/* Buttons */
 button {
-  padding: 1px 10px;
-  margin: 1px 5px;
 }
 
 /* Sprited icons. */
-.icon21 {
-  height: 21px;
-  width: 21px;
-  background-image: url(../images/icons.png);
-}
 .trash {
   background-position: 0px 0px;
 }
@@ -126,14 +47,34 @@ button {
   background-position: -42px 0px;
 }
 
-h1 {
-  font-weight: normal;
-  font-size: 140%;
-}
-
 #gamepanel {
   margin-top: 1em;
   margin-left: 1.5em;
   font-family: sans-serif;
 }
 
+.level_dot {
+    border: 1px solid #DDD;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+}
+
+.invisible {
+    display: none;
+}
+
+.visible {
+    display: inline-block;
+}
+
+.level_done, .level_dot:hover, .level_number:hover {
+    background-color: #DDD;
+    color: #000;
+}
+.level_number {
+    border: 1px solid #DDD;
+    border-radius: 20px;
+    padding: 6px 12px;
+    color: #888;
+}
