@@ -5,4 +5,5 @@
   2. http://phaser.io/
   3. https://github.com/Olical/EventEmitter
   4. https://github.com/nanojs/nano-ajax
-  5. And of course https://developers.google.com/blockly
+  5. https://github.com/musterknabe/translate.js
+  6. And of course https://developers.google.com/blockly
