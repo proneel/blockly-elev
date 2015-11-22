@@ -45,7 +45,7 @@ var PersonManager = function() {
     };
 
     this.stopTimer = function() {
-        if (this.intervalID != 'undefined' && this.intervalID != null) {
+        if (typeof(this.intervalID) != 'undefined' && this.intervalID != null) {
             window.clearInterval(this.intervalID);
             this.intervalID = null;
         }
@@ -267,6 +267,12 @@ var PersonManager = function() {
             }
             return true; // continue callbacks
         }};
+    };
+
+    this.getOldestCallDirection = function(floorNumber) {
+        p = _.findWhere(this.persons, {state:'waiting', onFloor:floorNumber});
+        if (typeof(p) == 'undefined') return null; // there is a problem (probably a user code bug), we couldnt find a person waiting on that floor
+        else return p.targetFloor > p.onFloor ? 'up' : 'down';
     };
 
     this.addPerson = function(fromFloor, toFloor) {

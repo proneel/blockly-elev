@@ -48,7 +48,7 @@ var FloorManager = function() {
     };
 
     this.stopTimer = function() {
-        if (this.intervalID != 'undefined' && this.intervalID != null) {
+        if (typeof(this.intervalID) != 'undefined' && this.intervalID != null) {
             window.clearInterval(this.intervalID);
             this.intervalID = null;
         }
@@ -63,7 +63,7 @@ var FloorManager = function() {
             } else t.countdown--; // one more interval done
         } else if (t !== null && t.type == 'loop') {
             ret = t.callback(floorManager, t.ctx); // invoke the callback and check the return value
-            if (!ret && t.id == floorManager.timer1.id) floorManager.timer1 = null; // if the callback had returned true, it means the callbacks should continue, else false means stop further callbacks (unless the callback changed the timer itself)
+            if (!ret && floorManager.timer1 != null && t.id == floorManager.timer1.id) floorManager.timer1 = null; // if the callback had returned true, it means the callbacks should continue, else false means stop further callbacks (unless the callback changed the timer itself)
         }
     };
 

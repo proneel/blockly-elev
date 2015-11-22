@@ -5,22 +5,26 @@ var RunGame = {
     //_requests: [[0,4],[0,3],[0,2]],
     //_requests: [[0,4],[0,3],[0,2],[0,1],[0,2],[0,3],[0,4],[0,2],[0,1],[1,4],[0,3],[2,4],[0,4],[0,1],[3,4],[0,2],[2,4],[0,3]],
     //_requests: [[4,0],[4,3],[4,2],[4,1],[4,2],[4,3],[3,4],[4,2],[2,1],[1,4],[4,3],[2,4],[2,4],[0,1],[3,4],[0,2],[2,4],[0,3]],
-    _requests: [[4,0],[0,3],[4,2],[3,1],[4,2],[2,3],[3,4],[],[4,2],[2,1],[1,4],[4,3],[2,4],[2,4],[0,1],[3,4],[0,2],[2,4],[0,3]],
+    //_requests: [[4,0],[0,3],[4,2],[3,1],[4,2],[2,3],[3,4],[],[4,2],[2,1],[1,4],[4,3],[2,4],[2,4],[0,1],[3,4],[0,2],[2,4],[0,3]],
     //_requests: [[0,3],[1,2],[1,4],[1,4],[1,0],[3,4]],
     //_requests: [[0,2],[4,1],[0,4],[2,3],[4,1],[1,3],[2,4],[1,2],[1,0],[2,4]],
     //_requests: [[0,4]],
+    _requests : [
+                 [[0,4]],
+                 [[1,4]],
+                ],
 
     gameStatus : null,
 
     init : function() {
-        RunGame.requests = RunGame._requests.slice(0); // make a copy to use
+        RunGame.requests = RunGame._requests[__level-1].slice(0); // make a copy of the request and use it. Pick the one according to the level of the game.
         RunGame.add(RunGame.requests.shift());
         // start a timer every 3 secs which adds persons, if any and once everyone is added, changes to validate if the elevator is actually moving people or not
         RunGame.intervalID = window.setInterval(RunGame._addPersons, 3000);
     },
 
     shutdown : function() {
-        if (RunGame.intervalID != 'undefined' && RunGame.intervalID != null) {
+        if (typeof(RunGame.intervalID) != 'undefined' && RunGame.intervalID != null) {
             window.clearInterval(RunGame.intervalID);
             RunGame.intervalID = null;
         }

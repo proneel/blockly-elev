@@ -45,6 +45,8 @@ var DisplayInit = {
         floorManager.initialize();
         personManager.initialize();
         controller.initialize();
+
+        __turnOnRun(); // now we can show the run button
     },
 
     paintFloors : function() {

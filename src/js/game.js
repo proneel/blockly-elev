@@ -6,7 +6,7 @@ var ElevGame = {
     workspace : null,
 
     // load all custom functions available to the user of this game
-    loadBlocks : function() {
+    loadBlocks : function(level) {
         Blockly.Blocks['storeCall'] = {
             init: function() {
                 this.appendDummyInput().appendField("storeCall");
@@ -32,24 +32,26 @@ var ElevGame = {
 
         Blockly.Blocks['openElevator'] = {
             init: function() {
-                this.appendDummyInput().appendField("openElevator");
-                this.appendValueInput("floor").setCheck("Number");
-                this.appendValueInput("direction");
+                this.appendDummyInput().appendField(__t('blocks::openElevator_name'));
+                if (level != 1 && level != 2) {
+                    this.appendValueInput("direction");
+                }
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('openElevator');
+                this.setColour(240);
+                if (level == 1 && level != 2) this.setTooltip(__t('blocks::openElevator_tipS'));
+                else this.setTooltip(__t('blocks::openElevator_tip'));
             }
         };
 
         Blockly.Blocks['goToFloor'] = {
             init: function() {
-                this.appendDummyInput().appendField("goToFloor");
+                this.appendDummyInput().appendField(__t('blocks::goToFloor_name'));
                 this.appendValueInput("floor").setCheck("Number");
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('goToFloor');
+                this.setColour(240);
+                this.setTooltip(__t('blocks::goToFloor_tip'));
             }
         };
 
@@ -138,10 +140,12 @@ var ElevGame = {
         };
 
         Blockly.JavaScript['openElevator'] = function(block) {
-            var value_floor = Blockly.JavaScript.valueToCode(block, 'floor', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var code = 'openElevator(' + value_floor + ',' + value_direction + ');\n';
-            return code;
+            if (level == 1 && level != 2) {
+                return 'openElevator();\n';
+            } else {
+                var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
+                return 'openElevator(' + value_direction + ');\n';
+            }
         };
 
         Blockly.JavaScript['goToFloor'] = function(block) {
@@ -194,7 +198,7 @@ var ElevGame = {
     modifyCodeBeforeExec : function(code) {
         code = code.concat("\nstoreCall = function(floor, direction) {controller.store_call(floor,direction);}");
         code = code.concat("\nstoreRequest = function(floor) {controller.store_request(floor);}");
-        code = code.concat("\nopenElevator = function(floor, direction) {controller.open_elevator(floor,direction);}");
+        code = code.concat("\nopenElevator = function(direction) {controller.open_elevator(direction);}");
         code = code.concat("\ngoToFloor = function(floor) {controller.go_to_floor(floor);}");
         code = code.concat("\nrequestCount = function(floor) {return controller.request_count(floor);}");
         code = code.concat("\ncallCount = function(floor, direction) {return controller.call_count(floor, direction);}");
@@ -202,10 +206,10 @@ var ElevGame = {
         code = code.concat("\ngetCallFloor = function() {return controller.get_call_floor();}");
         code = code.concat("\nnextRequestedFloor = function() {return controller.next_requested_floor();}");
         code = code.concat("\nclearCall = function(floor, direction) {controller.clear_call(floor, direction);}");
-        code = code.concat("\ncontroller._eventElevatorCalled = eventElevatorCalled;");
-        code = code.concat("\ncontroller._eventFloorRequested = eventFloorRequested;");
-        code = code.concat("\ncontroller._eventFloorArrived = eventFloorArrived;");
-        code = code.concat("\ncontroller._eventElevClosed = eventElevClosed;");
+        code = code.concat("\ncontroller._eventElevatorCalled = elevator_called;");
+        code = code.concat("\ncontroller._eventFloorRequested = floor_requested;");
+        if (__level != 1) code = code.concat("\ncontroller._eventFloorArrived = floor_arrived;");
+        if (__level != 1 && __level != 2) code = code.concat("\ncontroller._eventElevClosed = eventElevClosed;");
         code = code.concat("\ncontroller.initializeAll();");
         code = code.concat("\nRunGame.init();");
 
@@ -215,6 +219,12 @@ var ElevGame = {
     showCode : function() {
         var code_ = Blockly.JavaScript.workspaceToCode(ElevGame.workspace);
         window.alert(code_);
+    },
+
+    showXML : function() {
+        var xml = Blockly.Xml.workspaceToDom(ElevGame.workspace);
+        var xml_text = Blockly.Xml.domToText(xml);
+        window.alert(xml_text);
     },
 
     reset : function() {
@@ -234,14 +244,14 @@ var ElevGame = {
 
     // Initialize Blockly and the game.  Called on page load.
     initBlockly : function() {
-        ElevGame.loadBlocks(); // load our custom functions
+        ElevGame.loadBlocks(__level); // load our custom functions
 
-        // load the toolbox XML delivered from the server
-        nanoajax.ajax({url:'res/toolbox.xml'}, function (code, responseText) {
+        // load the toolbox XML delivered from the server, the one for the appropriate level
+        nanoajax.ajax({url:'res/toolbox' + __level + '.xml'}, function (code, responseText) {
             ElevGame.workspace = Blockly.inject('blocklyDiv', {media: 'media/', toolbox: Blockly.Xml.textToDom(responseText)});
 
             // load the startBlocks XML delivered from the server
-            nanoajax.ajax({url:'res/startBlocks.xml'}, function (code, responseText) {Blockly.Xml.domToWorkspace(ElevGame.workspace,Blockly.Xml.textToDom(responseText));});
+            nanoajax.ajax({url:'res/startBlocks' + __level + '.xml'}, function (code, responseText) {Blockly.Xml.domToWorkspace(ElevGame.workspace,Blockly.Xml.textToDom(responseText));});
         });
     }
 };

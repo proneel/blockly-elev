@@ -2,14 +2,22 @@
   <block type="procedures_defnoreturn" deletable="false" x="1" y="1">
     <field name="NAME">elevator called</field>
     <statement name="STACK">
+      <block type="openElevator" />
     </statement>
   </block>
-  <block type="procedures_defnoreturn" deletable="false" x="1" y="100">
+  <block type="procedures_defnoreturn" deletable="false" x="5" y="75">
     <mutation>
       <arg name="floor" />
     </mutation>
     <field name="NAME">floor requested</field>
     <statement name="STACK">
+      <block type="goToFloor">
+        <value name="floor">
+          <block type="variables_get">
+            <field name="VAR">floor</field>
+          </block>
+        </value>
+      </block>
     </statement>
   </block>
 </xml>

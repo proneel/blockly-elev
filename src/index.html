@@ -9,6 +9,7 @@
   <script type="text/javascript" src="js/phaser.min.js"></script>
   <script type="text/javascript" src="js/EventEmitter.min.js"></script>
   <script type="text/javascript" src="js/nanoajax.min.js"></script>
+  <script type="text/javascript" src="js/translate.min.js"></script>
   <script type="text/javascript" src="js/blockly_compressed.js"></script>
   <script type="text/javascript" src="js/blocks_compressed.js"></script>
   <script type="text/javascript" src="js/javascript_compressed.js"></script>
@@ -21,6 +22,7 @@
   <script type="text/javascript" src="js/personmanager.js"></script>
   <script type="text/javascript" src="js/controller.js"></script>
   <script type="text/javascript" src="js/rungame.js"></script>
+  <script type="text/javascript" src="js/game_en.js"></script>
 </head>
 <body>
   <table>
@@ -41,11 +43,12 @@
     </tr>
     <tr>
       <td>
-        <button id="runButton">Run Code</button>
+        <button id="runButton" style="display:none">Run Code</button>
         <button id="resetButton" style="display:none">Reset</button>
       </td>
       <td>
         <button id="viewButton">Show Code</button>
+        <button id="viewXMLButton">Show XML</button>
       </td>
     </tr>
     <tr>
@@ -68,20 +71,27 @@
 // for browsers where the window.console is unavailable
 if(!window.console){ window.console = {log: function(){} }; } 
 
+// game (phaser) global variable
 var game = null;
-var level = 1; // default
+
+// i18n message translation
+var __t = libTranslate.getTranslationFunction(messages);
+
+// the game level (difficulty)
+var __level = 1; // default
 
 // on window load
 __initialize = function() {
-    // display the correct level
+    // find the level from the URL
     l = window.location.search.match('level=[0-9]+');
     if (l != null) {
-        level = Number(l[0].substring(6));
-        if (level < 1 || level > 4) level = 1;
+        __level = Number(l[0].substring(6));
+        if (__level < 1 || __level > 4) __level = 1;
     }
     
+    // display the correct level
     for (i = 1; i <= 4; ++i) {
-        if (i == level) {
+        if (i == __level) {
             document.getElementById('level'+i).className = "level_dot invisible";
             document.getElementById('level'+i+'s').className = "level_number level_done visible";
         } else {
@@ -92,8 +102,8 @@ __initialize = function() {
 
     // create a phaser where the elevator game will be displayed
     game = new Phaser.Game(__c_.maxX, __c_.maxY(), Phaser.AUTO, 'gamepanel', { preload: DisplayInit.preLoad, create: DisplayInit.create, update: DisplayInit.update });
-    // initialize Blockly
-    ElevGame.initBlockly();
+
+    ElevGame.initBlockly(); // initialize Blockly
 }
 
 /**
@@ -104,19 +114,28 @@ __resize = function() {
     document.getElementById('blocklyDiv').style.width = width + 'px';
 };
 
-document.getElementById('runButton').addEventListener('click', function() {
+__turnOnRun = function() {
+    document.getElementById('resetButton').style.display = 'none';
+    document.getElementById('runButton').style.display = 'block';
+};
+
+__turnOnReset = function() {
     document.getElementById('resetButton').style.display = 'block';
     document.getElementById('runButton').style.display = 'none';
+};
+
+document.getElementById('runButton').addEventListener('click', function() {
+    __turnOnReset();
     ElevGame.runJS();
 });
 
 document.getElementById('resetButton').addEventListener('click', function() {
-    document.getElementById('resetButton').style.display = 'none';
-    document.getElementById('runButton').style.display = 'block';
+    __turnOnRun();
     ElevGame.reset();
 });
 
 document.getElementById('viewButton').addEventListener('click', ElevGame.showCode);
+document.getElementById('viewXMLButton').addEventListener('click', ElevGame.showXML);
 
 window.addEventListener('load', __initialize);
 window.addEventListener('resize', __resize);

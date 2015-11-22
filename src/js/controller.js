@@ -21,11 +21,13 @@ var Controller = function() {
 
     this.elevatorCalled = function(floor, direction) {
         window.console.log('Elevator called on floor ' + floor + ' in direction ' + direction);
+        if (__level == 1 || __level == 2) this.store_call(floor, direction);
         this._eventElevatorCalled(floor, this.atFloor, direction);
     };
 
     this.floorRequested = function(floor) {
         window.console.log('Request to go to floor ' + floor);
+        if (__level == 2) this.store_request(floor);
         this._eventFloorRequested(floor);
     };
 
@@ -38,13 +40,14 @@ var Controller = function() {
         window.console.log('Elevator arrived on floor ' + floor + ' in direction ' + direction);
         direction = floor > this.atFloor ? "up" : "down";
         this.atFloor = floor;
-        this._eventFloorArrived(floor, direction);
+        if (__level == 1) floorManager.emit('elev-arrived', this.atFloor, direction);
+        else this._eventFloorArrived(floor, direction);
     };
 
     this.elevClosed = function() {
         window.console.log('Elevator closed with or without people already inside');
         this.requests = _.without(this.requests, this.atFloor);
-        this._eventElevClosed(this.atFloor);
+        if (__level != 1 && __level != 2) this._eventElevClosed(this.atFloor);
     };
 
     this.store_call = function(floor, direction) {
@@ -64,10 +67,16 @@ var Controller = function() {
         this.requests.push(floor);
     };
 
-    this.open_elevator = function(floor, direction) {
-        this.validateFloor(floor, 'openElevator');
-        this.validateDirection(direction, 'openElevator');
-        floorManager.emit('elev-arrived', floor, direction);
+    this.open_elevator = function(direction) {
+        // we automatically choose the direction of the lift, for simple cases
+        if (__level == 1 || __level == 2) {
+            if (this.requests[0] == this.atFloor) direction = 'up'; // doesnt matter which we set it to
+            if (direction == null) direction = this.get_call_direction(this.atFloor); // else we may have 
+            //if this.endGame(false, new ElevException('Elevator not called or going to floor ' + this.atFloor + ', cannot open the elevator there!'));
+            //direction = personManager.getOldestCallDirection(this.atFloor-1); // we may have reached a floor to pick someone up, get the dir of the oldest caller and that may have been wiped out of the calls array
+            
+        } else this.validateDirection(direction, 'openElevator');
+        floorManager.emit('elev-arrived', this.atFloor, direction);
     };
 
     this.go_to_floor = function(floor) {
@@ -98,8 +107,8 @@ var Controller = function() {
     this.get_call_direction = function(floor) {
         this.validateFloor(floor, 'getCallDirection');
         callObj = _.findWhere(this.calls, {floor:floor});
-        if (callObj == 'undefined') this.endGame(false, new ElevException('Elevator not called on floor ' + floor + ', getCallDirection cannot return a result'));;
-        return callObj.direction;
+        if (typeof(callObj) == 'undefined') this.endGame(false, new ElevException('Elevator not called on floor ' + floor + ', getCallDirection cannot return a result'));
+        else return callObj.direction;
     };
 
     this.get_call_floor = function() {
@@ -137,6 +146,7 @@ var Controller = function() {
 
     this.endGame = function(isSuccess, o) {
         this.shutdownAll();
+
         if (isSuccess == true) {
             alert(o); // success message
         } else if (o instanceof ElevException) {
@@ -144,6 +154,9 @@ var Controller = function() {
         } else {
             alert(o); // fail message
         }
+
+        __turnOnRun(); // turn on the Run button and turn off the reset button
+
         // reinitialize so we can start a new game again
         this.initializeAll();
     };

@@ -1,11 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xml xmlns="http://www.w3.org/1999/xhtml">
+<xml>
   <block type="procedures_defnoreturn" deletable="false" x="1" y="1">
     <mutation>
       <arg name="floor" />
     </mutation>
     <field name="NAME">elevator called</field>
     <statement name="STACK">
+      <block type="goToFloor">
+        <value name="floor">
+          <block type="variables_get">
+            <field name="VAR">floor</field>
+          </block>
+        </value>
+      </block>
     </statement>
   </block>
   <block type="procedures_defnoreturn" deletable="false" x="1" y="100">
@@ -14,11 +20,19 @@
     </mutation>
     <field name="NAME">floor requested</field>
     <statement name="STACK">
+      <block type="goToFloor">
+        <value name="floor">
+          <block type="variables_get">
+            <field name="VAR">floor</field>
+          </block>
+        </value>
+      </block>
     </statement>
   </block>
-  <block type="procedures_defnoreturn" deletable="false" x="1" y="300">
+  <block type="procedures_defnoreturn" deletable="false" x="1" y="200">
     <field name="NAME">floor arrived</field>
     <statement name="STACK">
+      <block type="openElevator" />
     </statement>
   </block>
 </xml>
