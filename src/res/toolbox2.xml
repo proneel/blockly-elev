@@ -1,0 +1,9 @@
+  <xml style="display: none">
+    <block type="openElevator"></block>
+    <block type="goToFloor"></block>
+    <block type="variables_get">
+      <field name="VAR">floor</field>
+    </block>
+  </xml>
+
+
