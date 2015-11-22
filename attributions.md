@@ -6,4 +6,5 @@
   3. https://github.com/Olical/EventEmitter
   4. https://github.com/nanojs/nano-ajax
   5. https://github.com/musterknabe/translate.js
-  6. And of course https://developers.google.com/blockly
+  6. https://github.com/musterknabe/translate.j://github.com/Nycto/PicoModal 
+  7. And of course https://developers.google.com/blockly
