@@ -9,6 +9,7 @@
   <script type="text/javascript" src="js/phaser.min.js"></script>
   <script type="text/javascript" src="js/EventEmitter.min.js"></script>
   <script type="text/javascript" src="js/nanoajax.min.js"></script>
+  <script type="text/javascript" src="js/picoModal.min.js"></script>
   <script type="text/javascript" src="js/translate.min.js"></script>
   <script type="text/javascript" src="js/blockly_compressed.js"></script>
   <script type="text/javascript" src="js/blocks_compressed.js"></script>
@@ -49,6 +50,7 @@
       <td>
         <button id="viewButton">Show Code</button>
         <button id="viewXMLButton">Show XML</button>
+        <button id="helpButton" style="color:red;font-weight:bold">Help!</button>
       </td>
     </tr>
     <tr>
@@ -104,7 +106,13 @@ __initialize = function() {
     game = new Phaser.Game(__c_.maxX, __c_.maxY(), Phaser.AUTO, 'gamepanel', { preload: DisplayInit.preLoad, create: DisplayInit.create, update: DisplayInit.update });
 
     ElevGame.initBlockly(); // initialize Blockly
-}
+
+    picoModal(__t('info',__level)).show(); // show the info dialog box specific to this level
+};
+
+__showHelp = function() {
+    picoModal(__t('help',__level)).show();
+};
 
 /**
  * Force Blockly to resize into the available width.
@@ -136,6 +144,7 @@ document.getElementById('resetButton').addEventListener('click', function() {
 
 document.getElementById('viewButton').addEventListener('click', ElevGame.showCode);
 document.getElementById('viewXMLButton').addEventListener('click', ElevGame.showXML);
+document.getElementById('helpButton').addEventListener('click', __showHelp);
 
 window.addEventListener('load', __initialize);
 window.addEventListener('resize', __resize);

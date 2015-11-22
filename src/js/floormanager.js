@@ -3,7 +3,7 @@ var FloorManager = function() {
     this.spriteGroup = null;
     this.timer1 = null;
     this.floorsTraveled = 0;
-    this.doorState = '';
+    this.elevState = '';
 
     this.initialize = function() {
         this.floorObjects = new Array(__c_.numFloors);
@@ -40,6 +40,7 @@ var FloorManager = function() {
         });
         // update the floor display sprite on all floors to reflect that the elevator is on the 1st floor
         this._updateFloorNumberDisplay(1);
+        this.elevState = '';
     };
 
     this.shutdown = function() {
@@ -88,7 +89,6 @@ var FloorManager = function() {
         if (floorObject.elevDoorGraphics === null) floorObject.elevDoorGraphics = game.add.graphics();
 
         this.timer1 = {id:_.uniqueId(), type:'loop', ctx:{counter:0, callCounter:0, fo:floorObject, fn:floorNumber, cb:callback}, callback:function(m, ctx) {
-            m.doorState = 'opening';
             if ((ctx.callCounter++)%2 !== 0) return true; // slow down the opening a bit, dont process every callback
 
             ctx.fo.elevDoorGraphics.clear();
@@ -101,7 +101,6 @@ var FloorManager = function() {
             ctx.counter++;
 
             if (ctx.counter == 60) {
-                m.doorState = '';
                 if (ctx.cb !== null) ctx.cb(); // invoke the callback at the end of opening the elevator
                 return false;
             } else return true; // we need to continue the callbacks
@@ -112,7 +111,6 @@ var FloorManager = function() {
         if (floorObject.elevDoorGraphics === null) floorObject.elevDoorGraphics = game.add.graphics();
 
         this.timer1 = {id:_.uniqueId(), type:'loop', ctx:{counter:0, callCounter:0, fo:floorObject, fn:floorNumber, cb:callback}, callback:function(m, ctx) {
-            m.doorState = 'closing';
             if ((ctx.callCounter++)%2 !== 0) return true; // slow down the opening a bit, dont process every callback
 
             ctx.fo.elevDoorGraphics.clear();
@@ -125,7 +123,6 @@ var FloorManager = function() {
             ctx.counter++;
 
             if (ctx.counter == 60) {
-                m.doorState = '';
                 if (ctx.cb !== null) ctx.cb(); // invoke the callback at the end of closing the elevator
                 return false;
             } else return true; // we need to continue the callbacks
@@ -186,15 +183,19 @@ var FloorManager = function() {
 
     this.openElevator = function(floorNumber) {
         // paint an opening elevator and when opened inform personmanager so it can send people to board or people on board looking to get off can leave
+        this.elevState = 'opening';
         this._paintOpeningElevator(this.floorObjects[floorNumber], floorNumber, function() {
             window.console.log('elevator opened');
+            floorManager.elevState = 'opened';
             personManager.emit('elev-opened', floorNumber);
         });
     };
 
     this.elevBoarded = function(floorNumber, direction) {
+        this.elevState = 'closing';
         this._paintClosingElevator(this.floorObjects[floorNumber], floorNumber, function() {
             window.console.log('Elevator boarded at floor ' + floorNumber + ' in direction ' + direction);
+            floorManager.elevState = '';
             // once the elevator has closed, people in the elevator can click buttons to request a floor
             personManager.emit('elev-closed', floorNumber);
 
@@ -217,6 +218,7 @@ var FloorManager = function() {
 
         window.console.log('Traveling from ' + fromFloor + ' to ' + toFloor);
 
+        this.elevState = 'traveling';
         this.timer1 = {id:_.uniqueId(), type:'loop', ctx:{callCounter:0, cf:fromFloor, incr:incr, tf:toFloor, dir:direction}, callback:function(m, ctx) {
             if ((ctx.callCounter++)%50 != 49) return true; // move the elevator slowly, dont process every callback
 
@@ -231,6 +233,7 @@ var FloorManager = function() {
 
             if ((ctx.cf == ctx.tf) || (ctx.cf == __c_.numFloors-1 && ctx.incr == 1) || (ctx.cf === 0 && ctx.incr == -1)) {
                 // we have reached the top going up or bottom coming down or we have reached the requested floor, just stop the elevator 
+                m.elevState = '';
                 controller.emit('floor-arrived', ctx.cf+1, ctx.dir);
                 return false; // we have reached the destination, no more callbacks required
             }

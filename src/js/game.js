@@ -33,13 +33,13 @@ var ElevGame = {
         Blockly.Blocks['openElevator'] = {
             init: function() {
                 this.appendDummyInput().appendField(__t('blocks::openElevator_name'));
-                if (level != 1 && level != 2) {
+                if (level != 1 && level != 2 && level != 3) {
                     this.appendValueInput("direction");
                 }
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
                 this.setColour(240);
-                if (level == 1 && level != 2) this.setTooltip(__t('blocks::openElevator_tipS'));
+                if (level == 1 && level != 2 && level != 3) this.setTooltip(__t('blocks::openElevator_tipS'));
                 else this.setTooltip(__t('blocks::openElevator_tip'));
             }
         };
@@ -140,12 +140,8 @@ var ElevGame = {
         };
 
         Blockly.JavaScript['openElevator'] = function(block) {
-            if (level == 1 && level != 2) {
-                return 'openElevator();\n';
-            } else {
-                var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
-                return 'openElevator(' + value_direction + ');\n';
-            }
+            var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
+            return 'openElevator(' + value_direction + ');\n';
         };
 
         Blockly.JavaScript['goToFloor'] = function(block) {
@@ -209,7 +205,7 @@ var ElevGame = {
         code = code.concat("\ncontroller._eventElevatorCalled = elevator_called;");
         code = code.concat("\ncontroller._eventFloorRequested = floor_requested;");
         if (__level != 1) code = code.concat("\ncontroller._eventFloorArrived = floor_arrived;");
-        if (__level != 1 && __level != 2) code = code.concat("\ncontroller._eventElevClosed = eventElevClosed;");
+        if (__level != 1 && __level != 2 && __level != 3) code = code.concat("\ncontroller._eventElevClosed = eventElevClosed;");
         code = code.concat("\ncontroller.initializeAll();");
         code = code.concat("\nRunGame.init();");
 

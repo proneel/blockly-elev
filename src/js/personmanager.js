@@ -269,12 +269,6 @@ var PersonManager = function() {
         }};
     };
 
-    this.getOldestCallDirection = function(floorNumber) {
-        p = _.findWhere(this.persons, {state:'waiting', onFloor:floorNumber});
-        if (typeof(p) == 'undefined') return null; // there is a problem (probably a user code bug), we couldnt find a person waiting on that floor
-        else return p.targetFloor > p.onFloor ? 'up' : 'down';
-    };
-
     this.addPerson = function(fromFloor, toFloor) {
         p = new Person(fromFloor, toFloor);
         this.persons.push(p);

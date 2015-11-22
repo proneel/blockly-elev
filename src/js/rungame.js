@@ -12,6 +12,7 @@ var RunGame = {
     _requests : [
                  [[0,4]],
                  [[1,4]],
+                 [[0,4],[],[],[],[],[1,0]],
                 ],
 
     gameStatus : null,
