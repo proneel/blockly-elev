@@ -1,0 +1,15 @@
+<xml>
+  <block type="procedures_defnoreturn" deletable="false" x="1" y="1">
+    <field name="NAME">elevator called</field>
+    <statement name="STACK">
+    </statement>
+  </block>
+  <block type="procedures_defnoreturn" deletable="false" x="1" y="100">
+    <mutation>
+      <arg name="floor" />
+    </mutation>
+    <field name="NAME">floor requested</field>
+    <statement name="STACK">
+    </statement>
+  </block>
+</xml>
