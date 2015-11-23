@@ -21,7 +21,7 @@ var Controller = function() {
 
     this.elevatorCalled = function(floor, direction) {
         window.console.log('Elevator called on floor ' + floor + ' in direction ' + direction);
-        if (__level == 1 || __level == 2 || __level == 3 || __level == 4) this.store_call(floor, direction);
+        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5) this.store_call(floor, direction);
         this._eventElevatorCalled(floor, this.atFloor, direction);
     };
 
@@ -47,7 +47,11 @@ var Controller = function() {
     this.elevClosed = function() {
         window.console.log('Elevator closed with or without people already inside');
         this.requests = _.without(this.requests, this.atFloor);
-        if (__level != 1 && __level != 2 && __level != 3) this._eventElevClosed(this.atFloor);
+        if (__level != 1 && __level != 2 && __level != 3) {
+            dir = "";
+            if (this.request_count() > 0) dir = (this.next_requested_floor() > this.atFloor) ? "up" : "down";
+            this._eventElevClosed(this.atFloor, dir);
+        }
     };
 
     this.store_call = function(floor, direction) {
@@ -64,8 +68,8 @@ var Controller = function() {
 
     this.open_elevator = function(direction) {
         // we automatically choose the direction of the lift, for simple cases
-        if (__level == 1 || __level == 2 || __level == 3 || __level == 4) {
-            if (this.requests[0] == this.atFloor) direction = 'up'; // doesnt matter which we set it to, if we came here because of a request, just open the elevator
+        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5) {
+            if (this.request_count(this.atFloor) > 0) direction = 'up'; // doesnt matter which we set it to, if we came here because of a request, just open the elevator
             if (direction == null) direction = this.get_call_direction(this.atFloor); // else we may have have come here because someone called and if so, open here
         }
         if (this.validateDirection(direction, 'openElevator')) floorManager.emit('elev-arrived', this.atFloor, direction);

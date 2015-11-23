@@ -39,6 +39,8 @@
           <span id="level3s">3</span>
           <a id="level4" href="?level=4"></a>
           <span id="level4s">4</span>
+          <a id="level5" href="?level=5"></a>
+          <span id="level5s">5</span>
         </h1>
       </td>
     </tr>
@@ -89,11 +91,11 @@ __initialize = function() {
     l = window.location.search.match('level=[0-9]+');
     if (l != null) {
         __level = Number(l[0].substring(6));
-        if (__level < 1 || __level > 4) __level = 1;
+        if (__level < 1 || __level > 5) __level = 1;
     }
     
     // display the correct level
-    for (i = 1; i <= 4; ++i) {
+    for (i = 1; i <= 5; ++i) {
         if (i == __level) {
             document.getElementById('level'+i).className = "level_dot invisible";
             document.getElementById('level'+i+'s').className = "level_number level_done visible";

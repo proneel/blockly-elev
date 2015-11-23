@@ -33,13 +33,13 @@ var ElevGame = {
         Blockly.Blocks['openElevator'] = {
             init: function() {
                 this.appendDummyInput().appendField(__t('blocks::openElevator_name'));
-                if (level != 1 && level != 2 && level != 3 && level != 4) {
+                if (level != 1 && level != 2 && level != 3 && level != 4 && level != 5) {
                     this.appendValueInput("direction");
                 }
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
                 this.setColour(120);
-                if (level == 1 && level != 2 && level != 3 && level != 4) this.setTooltip(__t('blocks::openElevator_tipS'));
+                if (level == 1 && level != 2 && level != 3 && level != 4 && level != 5) this.setTooltip(__t('blocks::openElevator_tipS'));
                 else this.setTooltip(__t('blocks::openElevator_tip'));
             }
         };
@@ -63,7 +63,8 @@ var ElevGame = {
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
                 this.setColour(120);
-                this.setTooltip(__t('blocks::requestCount_tip'));
+                if (level == 4) this.setTooltip(__t('blocks::requestCount_tipS'));
+                else this.setTooltip(__t('blocks::requestCount_tip'));
             }
         };
 
@@ -123,6 +124,38 @@ var ElevGame = {
                 this.setNextStatement(true);
                 this.setColour(65);
                 this.setTooltip('clearCall');
+            }
+        };
+
+        Blockly.Blocks['request_queue_not_empty'] = {
+            init: function() {
+                this.setColour(60);
+                this.appendDummyInput()
+                    .appendField(__t('blocks::request_queue_not_empty_name'));
+                this.setOutput(true, 'Boolean');
+                this.setTooltip(__t('blocks::request_queue_not_empty_tip'));
+            }
+        };
+
+        Blockly.Blocks['request_queue_not_empty_curr_floor'] = {
+            init: function() {
+                this.setColour(60);
+                this.appendDummyInput()
+                    .appendField(__t('blocks::request_queue_not_empty_curr_floor_name'));
+                this.setOutput(true, 'Boolean');
+                this.setTooltip(__t('blocks::request_queue_not_empty_curr_floor_tip'));
+            }
+        };
+
+        Blockly.Blocks['dir_choice'] = {
+            init: function() {
+                var DIRECTION = [['up','up'], ['down', 'down']];
+                this.setColour(60);
+                this.appendDummyInput()
+                    .appendField(__t('blocks::dir_choice_name'))
+                    .appendField(new Blockly.FieldDropdown(DIRECTION), 'DIR');
+                this.setOutput(true, 'Boolean');
+                this.setTooltip(__t('blocks::dir_choice_tip'));
             }
         };
 
@@ -188,6 +221,22 @@ var ElevGame = {
             var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
             var code = 'clearCall(' + value_floor + ',' + value_direction + ');\n';
             return code;
+        };
+
+        Blockly.JavaScript['request_queue_not_empty'] = function(block) {
+            var code = 'requestCount() > 0';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['request_queue_not_empty_curr_floor'] = function(block) {
+            var code = 'requestCount(floor) > 0';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['dir_choice'] = function(block) {
+            var argument = block.getFieldValue('DIR');
+            var code = 'direction == \'' + argument + '\'';
+            return [code, Blockly.JavaScript.ORDER_NONE];
         };
     },
 
