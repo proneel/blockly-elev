@@ -1,12 +1,10 @@
   <xml style="display: none">
     <block type="controls_if"></block>
-    <block type="logic_compare"></block>
-    <block type="math_number"></block>
     <block type="openElevator"></block>
     <block type="goToFloor"></block>
     <block type="storeRequest"></block>
     <block type="nextRequestedFloor"></block>
-    <block type="requestCount"></block>
+    <block type="request_queue_not_empty"></block>
     <block type="variables_get">
       <field name="VAR">floor</field>
     </block>

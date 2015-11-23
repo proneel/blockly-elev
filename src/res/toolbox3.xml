@@ -1,7 +1,6 @@
   <xml style="display: none">
     <block type="controls_if"></block>
     <block type="logic_compare"></block>
-    <block type="math_number"></block>
     <block type="openElevator"></block>
     <block type="goToFloor"></block>
     <block type="variables_get">
