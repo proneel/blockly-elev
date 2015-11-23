@@ -21,25 +21,25 @@ var ElevGame = {
 
         Blockly.Blocks['storeRequest'] = {
             init: function() {
-                this.appendDummyInput().appendField("storeRequest");
+                this.appendDummyInput().appendField(__t('blocks::storeRequest_name'));
                 this.appendValueInput("floor").setCheck("Number");
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('storeRequest');
+                this.setColour(120);
+                this.setTooltip(__t('blocks::storeRequest_tip'));
             }
         };
 
         Blockly.Blocks['openElevator'] = {
             init: function() {
                 this.appendDummyInput().appendField(__t('blocks::openElevator_name'));
-                if (level != 1 && level != 2 && level != 3) {
+                if (level != 1 && level != 2 && level != 3 && level != 4) {
                     this.appendValueInput("direction");
                 }
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(240);
-                if (level == 1 && level != 2 && level != 3) this.setTooltip(__t('blocks::openElevator_tipS'));
+                this.setColour(120);
+                if (level == 1 && level != 2 && level != 3 && level != 4) this.setTooltip(__t('blocks::openElevator_tipS'));
                 else this.setTooltip(__t('blocks::openElevator_tip'));
             }
         };
@@ -50,20 +50,20 @@ var ElevGame = {
                 this.appendValueInput("floor").setCheck("Number");
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(240);
+                this.setColour(120);
                 this.setTooltip(__t('blocks::goToFloor_tip'));
             }
         };
 
         Blockly.Blocks['requestCount'] = {
             init: function() {
-                this.appendDummyInput().appendField("requestCount");
-                this.appendValueInput("floor").setCheck("Number");
+                this.appendDummyInput().appendField(__t('blocks::requestCount_name'));
+                if (level != 4) this.appendValueInput("floor").setCheck("Number");
                 this.setOutput(true, "Number");
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('requestCount');
+                this.setColour(120);
+                this.setTooltip(__t('blocks::requestCount_tip'));
             }
         };
 
@@ -105,12 +105,12 @@ var ElevGame = {
 
         Blockly.Blocks['nextRequestedFloor'] = {
             init: function() {
-                this.appendDummyInput().appendField("nextRequestedFloor");
+                this.appendDummyInput().appendField(__t('blocks::nextRequestedFloor_name'));
                 this.setOutput(true, "Number");
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('nextRequestedFloor');
+                this.setColour(120);
+                this.setTooltip(__t('blocks::nextRequestedFloor_tip'));
             }
         };
 
@@ -205,7 +205,7 @@ var ElevGame = {
         code = code.concat("\ncontroller._eventElevatorCalled = elevator_called;");
         code = code.concat("\ncontroller._eventFloorRequested = floor_requested;");
         if (__level != 1) code = code.concat("\ncontroller._eventFloorArrived = floor_arrived;");
-        if (__level != 1 && __level != 2 && __level != 3) code = code.concat("\ncontroller._eventElevClosed = eventElevClosed;");
+        if (__level != 1 && __level != 2 && __level != 3) code = code.concat("\ncontroller._eventElevClosed = elevator_door_closed;");
         code = code.concat("\ncontroller.initializeAll();");
         code = code.concat("\nRunGame.init();");
 
