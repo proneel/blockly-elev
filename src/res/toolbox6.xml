@@ -1,0 +1,14 @@
+  <xml style="display: none">
+    <block type="controls_if"></block>
+    <block type="math_number"></block>
+    <block type="math_arithmetic"></block>
+    <block type="openElevator"></block>
+    <block type="goToFloor"></block>
+    <block type="storeRequest"></block>
+    <block type="elev_req_condn"></block>
+    <block type="call_req_condn"></block>
+    <block type="dir_choice"></block>
+    <block type="variables_get">
+      <field name="VAR">floor</field>
+    </block>
+  </xml>

@@ -21,7 +21,7 @@ var Controller = function() {
 
     this.elevatorCalled = function(floor, direction) {
         window.console.log('Elevator called on floor ' + floor + ' in direction ' + direction);
-        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5) this.store_call(floor, direction);
+        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5 || __level == 6 || __level == 7) this.store_call(floor, direction);
         this._eventElevatorCalled(floor, this.atFloor, direction);
     };
 
@@ -68,7 +68,7 @@ var Controller = function() {
 
     this.open_elevator = function(direction) {
         // we automatically choose the direction of the lift, for simple cases
-        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5) {
+        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5 || __level == 6 || __level == 7) {
             if (this.request_count(this.atFloor) > 0) direction = 'up'; // doesnt matter which we set it to, if we came here because of a request, just open the elevator
             if (direction == null) direction = this.get_call_direction(this.atFloor); // else we may have have come here because someone called and if so, open here
         }
@@ -78,7 +78,10 @@ var Controller = function() {
     this.go_to_floor = function(floor) {
         if (floor == this.atFloor) this.endGame(false, new ElevException('You are already at that desired floor, so cannot go there!'));
         else if (floorManager.elevState != '') this.endGame(false, new ElevException('You requested the elevator to go to a floor when it is busy with another request, perhaps you need to \'queue\' your requests?'));
-        else if (this.validateFloor(floor, 'goToFloor')) floorManager.travelToFloor(this.atFloor, floor);
+        else if (this.validateFloor(floor, 'goToFloor')) {
+            this.clear_call(this.atFloor, floor > this.atFloor? "up" : "down");
+            floorManager.travelToFloor(this.atFloor, floor);
+        }
     };
 
     this.request_count = function(floor) {

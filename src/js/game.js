@@ -33,13 +33,13 @@ var ElevGame = {
         Blockly.Blocks['openElevator'] = {
             init: function() {
                 this.appendDummyInput().appendField(__t('blocks::openElevator_name'));
-                if (level != 1 && level != 2 && level != 3 && level != 4 && level != 5) {
+                if (level != 1 && level != 2 && level != 3 && level != 4 && level != 5 && level != 6 && level != 7) {
                     this.appendValueInput("direction");
                 }
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
                 this.setColour(120);
-                if (level == 1 && level != 2 && level != 3 && level != 4 && level != 5) this.setTooltip(__t('blocks::openElevator_tipS'));
+                if (level == 1 || level == 2 || level == 3 || level == 4 || level == 5 || level == 6 || level == 7) this.setTooltip(__t('blocks::openElevator_tipS'));
                 else this.setTooltip(__t('blocks::openElevator_tip'));
             }
         };
@@ -93,17 +93,6 @@ var ElevGame = {
             }
         };
 
-        Blockly.Blocks['getCallFloor'] = {
-            init: function() {
-                this.appendDummyInput().appendField("getCallFloor");
-                this.setOutput(true, "Number");
-                this.setPreviousStatement(true);
-                this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('getCallFloor');
-            }
-        };
-
         Blockly.Blocks['nextRequestedFloor'] = {
             init: function() {
                 this.appendDummyInput().appendField(__t('blocks::nextRequestedFloor_name'));
@@ -112,6 +101,17 @@ var ElevGame = {
                 this.setNextStatement(true);
                 this.setColour(120);
                 this.setTooltip(__t('blocks::nextRequestedFloor_tip'));
+            }
+        };
+
+        Blockly.Blocks['getCallFloor'] = {
+            init: function() {
+                this.appendDummyInput().appendField(__t('blocks::getCallFloor_name'));
+                this.setOutput(true, "Number");
+                this.setPreviousStatement(true);
+                this.setNextStatement(true);
+                this.setColour(120);
+                this.setTooltip(__t('blocks::getCallFloor_tip'));
             }
         };
 
@@ -156,6 +156,30 @@ var ElevGame = {
                     .appendField(new Blockly.FieldDropdown(DIRECTION), 'DIR');
                 this.setOutput(true, 'Boolean');
                 this.setTooltip(__t('blocks::dir_choice_tip'));
+            }
+        };
+
+        Blockly.Blocks['elev_req_condn'] = {
+            init: function() {
+                var REQCONDN = [['no travelers','no'], ['travelers to any floor', 'any'], ['travelers to this floor', 'floor']];
+                this.setColour(60);
+                this.appendDummyInput()
+                    .appendField(__t('blocks::elev_req_condn_name'))
+                    .appendField(new Blockly.FieldDropdown(REQCONDN), 'REQ');
+                this.setOutput(true, 'Boolean');
+                this.setTooltip(__t('blocks::elev_req_condn_tip'));
+            }
+        };
+
+        Blockly.Blocks['call_req_condn'] = {
+            init: function() {
+                var CALLCONDN = [['no calls','no'], ['call on any floor', 'any'], ['call on this floor', 'floor'], ['call on this floor in travel direction', 'dir']];
+                this.setColour(60);
+                this.appendDummyInput()
+                    .appendField(__t('blocks::call_req_condn_name'))
+                    .appendField(new Blockly.FieldDropdown(CALLCONDN), 'CALL');
+                this.setOutput(true, 'Boolean');
+                this.setTooltip(__t('blocks::call_req_condn_tip'));
             }
         };
 
@@ -206,11 +230,6 @@ var ElevGame = {
             return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
         };
 
-        Blockly.JavaScript['getCallFloor'] = function(block) {
-            var code = 'getCallFloor()';
-            return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
-        };
-
         Blockly.JavaScript['nextRequestedFloor'] = function(block) {
             var code = 'nextRequestedFloor()';
             return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
@@ -238,6 +257,31 @@ var ElevGame = {
             var code = 'direction == \'' + argument + '\'';
             return [code, Blockly.JavaScript.ORDER_NONE];
         };
+
+        Blockly.JavaScript['elev_req_condn'] = function(block) {
+            var argument = block.getFieldValue('REQ');
+            var code = "";
+            if (argument == 'no') code = 'requestCount() == 0';
+            else if (argument == 'any') code = 'requestCount() > 0';
+            else if (argument == 'floor') code = 'requestCount(floor) > 0';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['call_req_condn'] = function(block) {
+            var argument = block.getFieldValue('CALL');
+            var code = "";
+            if (argument == 'no') code = 'callCount() == 0';
+            else if (argument == 'any') code = 'callCount() > 0';
+            else if (argument == 'floor') code = 'callCount(floor) > 0';
+            else if (argument == 'dir') code = 'callCount(floor, direction) > 0';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['getCallFloor'] = function(block) {
+            var code = 'getCallFloor()';
+            return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+        };
+
     },
 
     modifyCodeBeforeExec : function(code) {
@@ -293,7 +337,7 @@ var ElevGame = {
 
         // load the toolbox XML delivered from the server, the one for the appropriate level
         nanoajax.ajax({url:'res/toolbox' + __level + '.xml'}, function (code, responseText) {
-            ElevGame.workspace = Blockly.inject('blocklyDiv', {media: 'media/', toolbox: Blockly.Xml.textToDom(responseText)});
+            ElevGame.workspace = Blockly.inject('blocklyDiv', {media: 'media/', toolbox: Blockly.Xml.textToDom(responseText), scrollbars : true});
 
             // load the startBlocks XML delivered from the server
             nanoajax.ajax({url:'res/startBlocks' + __level + '.xml'}, function (code, responseText) {Blockly.Xml.domToWorkspace(ElevGame.workspace,Blockly.Xml.textToDom(responseText));});
