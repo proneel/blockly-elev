@@ -1,0 +1,39 @@
+  <xml style="display: none">
+    <category name="Logic and Loops">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+    </category>
+    <category name="Math">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+    </category>
+    <category name="Procedures">
+      <block type="openElevator"></block>
+      <block type="goToFloor"></block>
+      <block type="storeRequest"></block>
+      <block type="getCallFloor"></block>
+      <block type="getCallDirection"></block>
+      <block type="call_req_condn"></block>
+      <block type="dir_choice"></block>
+      <block type="elev_req_condn"></block>
+    </category>
+    <category name="Variables">
+      <block type="variables_get">
+        <field name="VAR">floor</field>
+      </block>
+      <block type="variables_get">
+        <field name="VAR">at floor</field>
+      </block>
+      <block type="variables_get">
+        <field name="VAR">elevator is idle</field>
+      </block>
+      <block type="variables_get">
+        <field name="VAR">direction</field>
+      </block>
+    </category>
+  </xml>
+
+
