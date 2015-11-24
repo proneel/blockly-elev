@@ -7,18 +7,6 @@ var ElevGame = {
 
     // load all custom functions available to the user of this game
     loadBlocks : function(level) {
-        Blockly.Blocks['storeCall'] = {
-            init: function() {
-                this.appendDummyInput().appendField("storeCall");
-                this.appendValueInput("floor").setCheck("Number");
-                this.appendValueInput("direction");
-                this.setPreviousStatement(true);
-                this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('storeCall');
-            }
-        };
-
         Blockly.Blocks['storeRequest'] = {
             init: function() {
                 this.appendDummyInput().appendField(__t('blocks::storeRequest_name'));
@@ -33,13 +21,13 @@ var ElevGame = {
         Blockly.Blocks['openElevator'] = {
             init: function() {
                 this.appendDummyInput().appendField(__t('blocks::openElevator_name'));
-                if (level != 1 && level != 2 && level != 3 && level != 4 && level != 5 && level != 6 && level != 7) {
+                if (level == 8) {
                     this.appendValueInput("direction");
                 }
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
                 this.setColour(120);
-                if (level == 1 || level == 2 || level == 3 || level == 4 || level == 5 || level == 6 || level == 7) this.setTooltip(__t('blocks::openElevator_tipS'));
+                if (level != 8) this.setTooltip(__t('blocks::openElevator_tipS'));
                 else this.setTooltip(__t('blocks::openElevator_tip'));
             }
         };
@@ -55,41 +43,15 @@ var ElevGame = {
             }
         };
 
-        Blockly.Blocks['requestCount'] = {
-            init: function() {
-                this.appendDummyInput().appendField(__t('blocks::requestCount_name'));
-                if (level != 4) this.appendValueInput("floor").setCheck("Number");
-                this.setOutput(true, "Number");
-                this.setPreviousStatement(true);
-                this.setNextStatement(true);
-                this.setColour(120);
-                if (level == 4) this.setTooltip(__t('blocks::requestCount_tipS'));
-                else this.setTooltip(__t('blocks::requestCount_tip'));
-            }
-        };
-
-        Blockly.Blocks['callCount'] = {
-            init: function() {
-                this.appendDummyInput().appendField("callCount");
-                this.appendValueInput("floor").setCheck("Number");
-                this.appendValueInput("direction");
-                this.setOutput(true, "Number");
-                this.setPreviousStatement(true);
-                this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('callCount');
-            }
-        };
-
         Blockly.Blocks['getCallDirection'] = {
             init: function() {
-                this.appendDummyInput().appendField("getCallDirection");
+                this.appendDummyInput().appendField(__t('blocks::getCallDirection_name'));
                 this.appendValueInput("floor").setCheck("Number");
                 this.setOutput(true, "String");
                 this.setPreviousStatement(true);
                 this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('getCallDirection');
+                this.setColour(120);
+                this.setTooltip(__t('blocks::getCallDirection_tip'));
             }
         };
 
@@ -112,18 +74,6 @@ var ElevGame = {
                 this.setNextStatement(true);
                 this.setColour(120);
                 this.setTooltip(__t('blocks::getCallFloor_tip'));
-            }
-        };
-
-        Blockly.Blocks['clearCall'] = {
-            init: function() {
-                this.appendDummyInput().appendField("clearCall");
-                this.appendValueInput("floor").setCheck("Number");
-                this.appendValueInput("direction");
-                this.setPreviousStatement(true);
-                this.setNextStatement(true);
-                this.setColour(65);
-                this.setTooltip('clearCall');
             }
         };
 
@@ -161,7 +111,7 @@ var ElevGame = {
 
         Blockly.Blocks['elev_req_condn'] = {
             init: function() {
-                var REQCONDN = [['no travelers','no'], ['travelers to any floor', 'any'], ['travelers to this floor', 'floor']];
+                var REQCONDN = [['no travelers','no'], ['travelers to any floor', 'any'], ['travelers to this floor', 'floor'], ['travelers to other floors', 'other']];
                 this.setColour(60);
                 this.appendDummyInput()
                     .appendField(__t('blocks::elev_req_condn_name'))
@@ -183,13 +133,6 @@ var ElevGame = {
             }
         };
 
-        Blockly.JavaScript['storeCall'] = function(block) {
-            var value_floor = Blockly.JavaScript.valueToCode(block, 'floor', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var code = 'storeCall(' + value_floor + ',' + value_direction + ');\n';
-            return code;
-        };
-
         Blockly.JavaScript['storeRequest'] = function(block) {
             var value_floor = Blockly.JavaScript.valueToCode(block, 'floor', Blockly.JavaScript.ORDER_ATOMIC) || '';
             var code = 'storeRequest(' + value_floor + ');\n';
@@ -207,23 +150,6 @@ var ElevGame = {
             return code;
         };
 
-        Blockly.JavaScript['requestCount'] = function(block) {
-            var value_floor = Blockly.JavaScript.valueToCode(block, 'floor', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var code = '';
-            if (value_floor != '') code = 'requestCount(' + value_floor + ')';
-            else code = 'requestCount()';
-            return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
-        };
-
-        Blockly.JavaScript['callCount'] = function(block) {
-            var value_floor = Blockly.JavaScript.valueToCode(block, 'floor', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var code = '';
-            if (value_floor != '' && value_direction != '') code = 'callCount(' + value_floor + ',' + value_direction + ')'; // both values passed in
-            else code = 'callCount(' + value_floor + value_direction + ')'; // only one or none of the values are being passed in, no need for a comma
-            return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
-        };
-
         Blockly.JavaScript['getCallDirection'] = function(block) {
             var value_floor = Blockly.JavaScript.valueToCode(block, 'floor', Blockly.JavaScript.ORDER_ATOMIC) || '';
             var code = 'getCallDirection(' + value_floor + ')';
@@ -233,13 +159,6 @@ var ElevGame = {
         Blockly.JavaScript['nextRequestedFloor'] = function(block) {
             var code = 'nextRequestedFloor()';
             return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
-        };
-
-        Blockly.JavaScript['clearCall'] = function(block) {
-            var value_floor = Blockly.JavaScript.valueToCode(block, 'floor', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var value_direction = Blockly.JavaScript.valueToCode(block, 'direction', Blockly.JavaScript.ORDER_ATOMIC) || '';
-            var code = 'clearCall(' + value_floor + ',' + value_direction + ');\n';
-            return code;
         };
 
         Blockly.JavaScript['request_queue_not_empty'] = function(block) {
@@ -264,6 +183,7 @@ var ElevGame = {
             if (argument == 'no') code = 'requestCount() == 0';
             else if (argument == 'any') code = 'requestCount() > 0';
             else if (argument == 'floor') code = 'requestCount(floor) > 0';
+            else if (argument == 'other') code = 'requestCount(floor) != requestCount()';
             return [code, Blockly.JavaScript.ORDER_NONE];
         };
 

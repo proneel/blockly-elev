@@ -21,8 +21,9 @@ var Controller = function() {
 
     this.elevatorCalled = function(floor, direction) {
         window.console.log('Elevator called on floor ' + floor + ' in direction ' + direction);
-        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5 || __level == 6 || __level == 7) this.store_call(floor, direction);
-        this._eventElevatorCalled(floor, this.atFloor, direction);
+        var isIdle = this.call_count() == 0 && this.request_count() == 0;
+        this.store_call(floor, direction);
+        this._eventElevatorCalled(floor, this.atFloor, isIdle);
     };
 
     this.floorRequested = function(floor) {
@@ -59,7 +60,15 @@ var Controller = function() {
     };
 
     this.clear_call = function(floor, direction) {
-        if (this.validateFloor(floor, 'clearCall') && this.validateDirection(direction, 'clearCall')) this.calls = _.reject(this.calls, function(c) {return c.floor == floor && c.direction == direction;}, this);
+        first = true;
+        if (this.validateFloor(floor, 'clearCall') && this.validateDirection(direction, 'clearCall')) this.calls = _.reject(this.calls, function(c) {
+            if (c.floor == floor && c.direction == direction) {
+                ret = first ? true : false;
+                first = false;
+                return ret;
+            };
+            return false;
+        }, this);
     };
 
     this.store_request = function(floor) {
@@ -68,7 +77,7 @@ var Controller = function() {
 
     this.open_elevator = function(direction) {
         // we automatically choose the direction of the lift, for simple cases
-        if (__level == 1 || __level == 2 || __level == 3 || __level == 4 || __level == 5 || __level == 6 || __level == 7) {
+        if (__level != 8) {
             if (this.request_count(this.atFloor) > 0) direction = 'up'; // doesnt matter which we set it to, if we came here because of a request, just open the elevator
             if (direction == null) direction = this.get_call_direction(this.atFloor); // else we may have have come here because someone called and if so, open here
         }
