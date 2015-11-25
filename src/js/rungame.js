@@ -62,8 +62,8 @@ var RunGame = {
     },
 
     endGame : function(how, travel) {
-        if (how) controller.endGame(true, 'Great job!! You moved everyone in ' + travel + ' steps.');
-        else controller.endGame(false, 'Too bad :( ... better luck next time!');
+        if (how) controller.endGame(true, 'You moved everyone in ' + travel + ' steps.');
+        else controller.endGame(false, 'Better luck next time!');
     },
 
     add : function(item) {

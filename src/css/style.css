@@ -77,4 +77,10 @@ button {
     border-radius: 20px;
     padding: 6px 12px;
     color: #888;
+    text-decoration: none;
+}
+
+.popup {
+  font-size: large;
+  margin: 1em;
 }

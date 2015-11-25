@@ -165,11 +165,11 @@ var Controller = function() {
         this.shutdownAll();
 
         if (isSuccess == true) {
-            alert(o); // success message
+            picoModal('<div class="popup">Congratulations!</div> <div class="popup">' + o + '</div>').show(); // success message
         } else if (o instanceof ElevException) {
-            alert("Sorry, your code had an error :( - " + o.reason); // failed because of a validation error
+            picoModal('<div class="popup">Sorry, your code had an error :(</div> <div class="popup">' + o.reason + '</div>').show(); // failed because of a validation error
         } else {
-            alert(o); // fail message
+            picoModal('<div class="popup">Sorry, but you didn\'t move all the persons to their destinations :(</div> <div class="popup">' + o + '</div>').show(); // failed because all persons weren't moved
         }
 
         __turnOnRun(); // turn on the Run button and turn off the reset button

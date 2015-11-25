@@ -45,7 +45,7 @@
           <span id="level6s">6</span>
           <a id="level7" href="?level=7"></a>
           <span id="level7s">7</span>
-          <a id="level8" href="?level=8"></a>
+          <a id="level8" href="?level=8">8</a>
           <span id="level8s">8</span>
         </h1>
       </td>
@@ -102,7 +102,13 @@ __initialize = function() {
     
     // display the correct level
     for (i = 1; i <= 8; ++i) {
-        if (i == __level) {
+        if (i == 8) {
+            document.getElementById('level'+i).className = "level_number " + (__level == 8 ? "invisible" : "visible");
+            document.getElementById('level'+i+'s').className = "level_number" + (__level == 8 ? " level_done visible" : " invisible");
+        } else if (i < __level) {
+            document.getElementById('level'+i).className = "level_dot level_done visible";
+            document.getElementById('level'+i+'s').className = "level_number level_done invisible";
+        } else if (i == __level) {
             document.getElementById('level'+i).className = "level_dot invisible";
             document.getElementById('level'+i+'s').className = "level_number level_done visible";
         } else {
