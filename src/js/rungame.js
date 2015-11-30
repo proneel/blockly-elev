@@ -1,3 +1,4 @@
+// object that handles the generation of persons at time intervals to test if the blockly code is functioning as required
 var RunGame = {
     // add the data for persons entering various floors and exiting at other floors, one entry for each level
     _requests : [
@@ -11,8 +12,9 @@ var RunGame = {
                  [[4,0],[0,3],[4,2],[3,1],[4,2],[2,3],[3,4],[],[4,2],[2,1],[1,4],[4,3],[2,4],[2,4],[0,1],[3,4],[0,2],[2,4],[0,3]],
                 ],
 
-    gameStatus : null,
+    gameStatus : null, // a string which maintains the state of elevators on a floor and state and location of each person. Used to figure out if the code is 'doing anything'
 
+    // initialize the game, mainly the timer
     init : function() {
         RunGame.requests = RunGame._requests[__level-1].slice(0); // make a copy of the request and use it. Pick the one according to the level of the game.
         RunGame.add(RunGame.requests.shift());
@@ -20,6 +22,7 @@ var RunGame = {
         RunGame.intervalID = window.setInterval(RunGame._addPersons, 3000);
     },
 
+    // shutdown the game, mainly the timer
     shutdown : function() {
         if (typeof(RunGame.intervalID) != 'undefined' && RunGame.intervalID != null) {
             window.clearInterval(RunGame.intervalID);
@@ -28,6 +31,7 @@ var RunGame = {
         RunGame.gameStatus = null;
     },
 
+    // timer callback function, add a person if configured
     _addPersons : function() {
         // if we still have requests, dont bother validating the elevator yet
         item = RunGame.requests.shift();
@@ -40,6 +44,10 @@ var RunGame = {
         else RunGame.add(item);
     },
 
+    // timer callback function, all persons have been added, is the code now working?
+    // to check if the code is working, we keep a status of the game (person state and location, elevator location and state, floors traveled etc)
+    // if the state is the same between 2 calls of this callback, we know the game is 'stationary', so the game code has failed
+    // if all persons have exited however, we know the code has successfully transfered people to their destinations
     _validateWorking : function() {
         newGameStatus = '';
         // create a string which captures the state and position of all persons who have not exited and the number of floors traveled by the elevator
@@ -61,6 +69,7 @@ var RunGame = {
         }
     },
 
+    // if we ended the game, did we do it successfully (all persons moved) or failed (people still stuck on their floors)?
     endGame : function(how, travel) {
         if (how) controller.endGame(true, 'You moved everyone in ' + travel + ' steps.');
         else controller.endGame(false, 'Better luck next time!');

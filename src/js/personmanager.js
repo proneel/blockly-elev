@@ -1,3 +1,5 @@
+// A Person object represents an individual from the time when they enter the floor to traveling the elevator and then finally exiting the destination floor
+// It stores the state of the person (e.g. entering/waiting) as well as the sprite itself which is used to animate and move the sprite
 Person = function(fromFloor, toFloor) {
     this.id = personManager.nextPersonId++;
     this.state = 'entering';
@@ -9,10 +11,11 @@ Person = function(fromFloor, toFloor) {
     this.anim = null;
 };
 
+// manages movement of all persons across floors and into and out of the elevator
 var PersonManager = function() {
     this.nextPersonId = 0;
     this.persons = [];
-    this.timerClients = [];
+    this.timerClients = []; // persons and person manager may need something done (such as moving X coordinate) when the timer fires
     this.spriteGroup = null;
     this.standingFrames = [2, 13, 39, 52, 58, 84]; // frames showing the person in random standing poses
     this.timer = null; // timers used in PersonManager
@@ -44,6 +47,7 @@ var PersonManager = function() {
         this.timer = null; // dont fire any timers for this object either
     };
 
+    // stop the timer when the game is finished or is reset
     this.stopTimer = function() {
         if (typeof(this.intervalID) != 'undefined' && this.intervalID != null) {
             window.clearInterval(this.intervalID);
@@ -52,6 +56,7 @@ var PersonManager = function() {
     };
 
     this._processTimer = function() {
+        // process each timer client by checking if they have a timer callback set. If they do, call the callback and keep the callback on/off based on result from the callback function
         _.each(personManager.timerClients, function(p) {
             t = p.timer;
             if (t !== null && t.type == 'countdown') { // a countdown timer is fired after n intervals
@@ -66,6 +71,7 @@ var PersonManager = function() {
         });
     };
 
+    // code that handles a person entering the floor and then 'calling' the elevator
     this._enterAndCall = function(p) {
         if (p.anim !== null) {p.anim.stop(); p.anim = null;}
         p.anim = p.sprite.animations.play('right'); // start playing the move of the person to the right
@@ -84,6 +90,7 @@ var PersonManager = function() {
         }};
     };
 
+    // code that handles a person waiting in a pre-determined spot for the elevator to arrive on the floor
     this._wait = function(p, targetX) {
         if (p.anim !== null) {p.anim.stop(); p.anim = null;}
 
@@ -111,6 +118,7 @@ var PersonManager = function() {
         }};
     };
 
+    // allocate spots for each person (either to wait on the floor or to stand inside the elevator) such that there is adequate gap between people (just like people have 'personal space' in real life)
     this._findSpot = function(leftX, rightX, otherPx, dir, space) {
         _dir = dir == 'l2r';
         l = leftX;
@@ -127,12 +135,14 @@ var PersonManager = function() {
         return game.rnd.integerInRange(leftX,rightX); // none of the standard spots are available, so we are clearly packed in, return a random spot
     };
 
+    // callback to process the event that an elevator has been called on a given floor
     this.elevCalled = function(floorNumber, direction) {
         // an elevator has been called on that floor in that direction
         // send all such people waiting
         _.each(this.persons, function(p) {if (p.onFloor == floorNumber && p.state == 'entering' && p.direction == direction) personManager._wait(p, 100);});
     };
 
+    // callback to process the event that an elevator is opening on a given floor
     this.elevOpening = function(floorNumber, direction) {
         // an elevator is opening on this floor, find all persons on this floor waiting for the elevator in that direction
         // and make them all point to the elevator such that they seem to ready for it to open
@@ -148,6 +158,7 @@ var PersonManager = function() {
                 p.timer = {id:_.uniqueId(), type:'countdown', countdown:game.rnd.integerInRange(5,100), callback:function(p){p.sprite.frame = 59;}};
             }
 
+            // change state of people on the elevator who reached their destination floor from boarded to gettingoff
             if (p.targetFloor == floorNumber && p.state == 'boarded') {
                 found = true;
                 p.state = 'gettingoff';
@@ -169,6 +180,7 @@ var PersonManager = function() {
         }
     };
 
+    // callback to process the event that an elevator has fully opened on a given floor
     this.elevOpened = function(floorNumber) {
         window.console.log('person-elevator opened');
         game.world.bringToTop(this.spriteGroup); // or else this will be hidden behind the elevator door graphics
@@ -192,6 +204,7 @@ var PersonManager = function() {
             return true;
         };
 
+        // move each of the people waiting for the elevator in that direction to a spot inside the elevator
         for (i = 0, len = this.persons.length; i < len; ++i) {
             p = this.persons[i];
             if (p.onFloor == floorNumber && p.state == 'ready') {
@@ -227,27 +240,30 @@ var PersonManager = function() {
         }};
     };
 
+    // callback to process the event that an elevator has fully closed on a given floor
     this.elevClosed = function(floorNumber, direction) {
         // the elevator has closed
         // each person who has boarded will then press the unique floor they want, but only if they havent already pressed it before (TODO: randomize order in which they want to press)
         floorsWanted = [];
         _.each(this.persons, function(p) {
             if (p.state == 'boarded') {
-                if (!p.requestedFloor) {
+                if (!p.requestedFloor) { // a person who boarded on a previous floor shouldn't press the floor request button again just because the elevator stopped to pick someone up on an intermediate floor
                     floorsWanted.push(p.targetFloor);
                     p.requestedFloor = true;
                 }
             }
         });
 
-        if (floorsWanted.length > 0) _.each(_.uniq(floorsWanted), function(floor) {controller.emit('floor-requested', floor+1);});
+        if (floorsWanted.length > 0) _.each(_.uniq(floorsWanted), function(floor) {controller.emit('floor-requested', floor+1);}); // tell the controller each of the floor requests
     };
 
+    // have this person exit the elevator
     this._exitElevator = function(p) {
         p.anim = p.sprite.animations.play('leaveelev'); // play the anim of the person leaving the elevator
         p.timer = {id:_.uniqueId(), type:'countdown', countdown:100, callback:this._leaveFloor};// leave the floor after giving 2 secs for the previous animation to end
     };
 
+    // have this person leave the floor
     this._leaveFloor = function(p) {
         p.anim = p.sprite.animations.play('left'); // start playing the move of the person to the left (to exit the floor)
         // use a timer to also move the X coordinate of the sprite out the floor by moving left, at a random speed, some fast some slow
@@ -269,14 +285,17 @@ var PersonManager = function() {
         }};
     };
 
+    // add a person to the game
     this.addPerson = function(fromFloor, toFloor) {
         p = new Person(fromFloor, toFloor);
         this.persons.push(p);
         this.timerClients.push(p); // manage timers for this person
 
+        // the 'virtual' representation of the person in the game is the sprite of a human
         p.sprite = game.add.sprite(-60, __c_.maxY() -64 -2 -fromFloor*__c_.floorH*__c_.tilePix, 'human', 26);
         this.spriteGroup.add(p.sprite);
 
+        // specify which frames of the human sprite represent what type of animation, such as moving to the right, left, entering an elevator etc
         p.sprite.animations.add('right', [143, 144, 145, 146, 147, 148, 149, 150], 10, true);
         p.sprite.animations.add('left', [117, 118, 119, 120, 121, 122, 123, 124], 10, true);
         p.sprite.animations.add('call', [156, 157, 158, 159, 160, 161, 156], 5 );

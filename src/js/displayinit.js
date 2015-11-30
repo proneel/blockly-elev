@@ -1,5 +1,7 @@
 var DisplayInit = {
 
+    // phaser pre-load
+    // here we load all images that will be used by phaser
     preLoad : function() {
         game.load.image('tile', 'images/tile.png');
         game.load.image('elev', 'images/elevinside.png');
@@ -40,7 +42,7 @@ var DisplayInit = {
 
         graphics = game.add.graphics();
 
-        DisplayInit.paintFloors();
+        DisplayInit.paintFloors(); // paint the floors first because that will be the background
         // can initialize only after painting the basic floors, or else doors will be hidden behind
         floorManager.initialize();
         personManager.initialize();
@@ -51,8 +53,8 @@ var DisplayInit = {
 
     paintFloors : function() {
         for (floorNumber = 0; floorNumber < __c_.numFloors; ++floorNumber) {
-            mainTileToUse = floorNumber%5; //game.rnd.integerInRange(0,7); // there are 8 basic wall shades which are the first 8 tiles in the sheet
-            otherTileToUse = floorNumber%4 + 5; //game.rnd.integerInRange(2,17); // game.rnd.integerInRange(8,17); // there are 10 other patterns following the 8 basic wall shades, use one per floor
+            mainTileToUse = floorNumber%5; // there are 8 basic wall shades which are the first 8 tiles in the sheet
+            otherTileToUse = floorNumber%4 + 5; // game.rnd.integerInRange(8,17); // there are 10 other patterns following the 8 basic wall shades, use one per floor
             for (x = 0; x < __c_.maxX/__c_.tilePix; ++x) {
                 for (y = 1; y <= __c_.floorH; ++y) {
                     // use another tile for alternate pattern of random tiles in the middle rows of a floor

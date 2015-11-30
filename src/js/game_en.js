@@ -1,5 +1,6 @@
 var messages = {
 
+    // display name and tooltip for each kind of custom block we have in this game
     blocks: {
         openElevator_name : 'open elevator',
         openElevator_tip : 'Open the elevator at the desired floor and indicate the direction to pick up passengers',
@@ -31,6 +32,7 @@ var messages = {
         call_queue_not_empty_tip : 'There are active calls made by persons waiting for the elevator on one or more floors and we haven\'t gone to pick them up yet. Use this in an \'if\' or \'else-if\' block to enter instructions based on this state.'
     },
 
+    // what is the preview/info shown as a popup for each level
     info: {
         1: '<p>The panel on the left of this game shows a building with 5 floors and a closed elevator door on each floor</p> </p><p>As soon as the game starts, you will see a person arrive on floor 1 and press the &quot;up&quot; button to call the elevator.</p></p>Your task is to fill in the &quot;elevator called&quot; procedure on the right to respond to that call.</p><p>After the person enters the elevator they will press a button indicating the desired floor they wish to travel to. Your also need to fill in the &quot;floor requested&quot; procedure on the right to respond to that request</p><p>Good luck and press the Help button if you want a hint</p> <p>Do not worry, it really needs only 2 lines of code to work! Once you move the blocks into the 2 procedures, you can view your code with &quot;View Code&quot; or run the game with &quot;Run Code&quot;</p><p>How exciting :)</p>',
         2: '<p>On this level, we make it a teeny bit difficult. You will see the person arrive on the second floor, while the elevator is idle on the first. Thats not too bad, you already know how to send the elevator to that floor, dont you?</p></p>We also add one more procedure to fill in this time, &quot;floor arrived&quot;. You need to fill in what one does when the elevator arrives at the floor, perhaps just open it?</p> <p>Good luck and press the Help button if you want a hint</p>',
@@ -42,6 +44,7 @@ var messages = {
         8: '<p>Now we get to the point where we handle all kinds of situations. You will have 18 persons arrive at various times across all 5 floors going to different destinations. It is going to be a busy day for our elevator!</p> However, do not worry, we have set the stage for this complexity by considering individual (and simpler) scenarios in previous levels; you now only have to put it all together!</p><p>Good luck and press the Help button if you want a hint</p>'
     },
 
+    // what we show as help text for each level
     help: {
         1: '<p>In this simplest scenario, the elevator is already on the floor where the person arrives, so just open the elevator.</p><p>And when the person presses the button, we call &quot;floor requested&quot; in which case just go to the desired floor! Dont forget to pass the floor as the argument to the call ... </p>',
         2: '<p>In this case, the elevator is not already on the floor where the person arrives, so let us first send the elevator to that floor.</p><p>And when we arrive at a floor, lets just open the elevator. </p>',

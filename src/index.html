@@ -30,6 +30,7 @@
     <tr>
       <td colspan=2>
         <h1>
+          <!-- draw the circles or numbers representing each level -->
           <span id="title">This is a demo of programming an elevator using <a href="https://developers.google.com/blockly/">Blockly</a>.</span> &nbsp;
           <a id="level1" href="?level=1"></a>
           <span id="level1s">1</span>
@@ -64,10 +65,12 @@
     </tr>
     <tr>
       <td>
+        <!-- panel where the elevator and floors and persons are displayed -->
         <div id="gamepanel" style="width: 500px">
         </div>
       </td>
       <td>
+        <!-- panel where the blockly blocks are displayed -->
         <div id="blocklyDiv" style="height: 800px"></div>
       </td>
     </tr>
@@ -103,6 +106,7 @@ __initialize = function() {
     // display the correct level
     for (i = 1; i <= 8; ++i) {
         if (i == 8) {
+            // level 8 is special, we always display the number so people know how many levels there are
             document.getElementById('level'+i).className = "level_number " + (__level == 8 ? "invisible" : "visible");
             document.getElementById('level'+i+'s').className = "level_number" + (__level == 8 ? " level_done visible" : " invisible");
         } else if (i < __level) {
@@ -129,38 +133,42 @@ __showHelp = function() {
     picoModal(__t('help',__level)).show();
 };
 
-/**
- * Force Blockly to resize into the available width.
- */
+//Force Blockly to resize into the available width.
 __resize = function() {
     var width = Math.max(window.innerWidth - 600, 250);
     document.getElementById('blocklyDiv').style.width = width + 'px';
 };
 
+//Toggle run and reset
 __turnOnRun = function() {
     document.getElementById('resetButton').style.display = 'none';
     document.getElementById('runButton').style.display = 'block';
 };
 
+//Toggle run and reset
 __turnOnReset = function() {
     document.getElementById('resetButton').style.display = 'block';
     document.getElementById('runButton').style.display = 'none';
 };
 
+//Run the user's blockly javascript when the run button is clicked
 document.getElementById('runButton').addEventListener('click', function() {
     __turnOnReset();
     ElevGame.runJS();
 });
 
+//Reset everything to normal when the reset button is clicked
 document.getElementById('resetButton').addEventListener('click', function() {
     __turnOnRun();
     ElevGame.reset();
 });
 
+// callbacks for other button clicks
 document.getElementById('viewButton').addEventListener('click', ElevGame.showCode);
 document.getElementById('viewXMLButton').addEventListener('click', ElevGame.showXML);
 document.getElementById('helpButton').addEventListener('click', __showHelp);
 
+// callbacks for window load and resizing
 window.addEventListener('load', __initialize);
 window.addEventListener('resize', __resize);
 
